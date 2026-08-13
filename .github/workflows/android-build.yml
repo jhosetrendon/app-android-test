@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout del proyecto
+    - name: Descargar código del repositorio
       uses: actions/checkout@v4
 
     - name: Configurar Java 17
@@ -18,16 +18,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Configurar Gradle
+    # AQUÍ ESTÁ LA SOLUCIÓN: Le decimos que instale la versión 8.7
+    - name: Configurar motor de Gradle
       uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.7'
 
-    - name: Compilar APK con Gradle
-      run: gradle assembleDebug
+    - name: Generar Wrapper y Compilar APK
+      run: |
+        gradle wrapper
+        ./gradlew assembleDebug --stacktrace
 
-    - name: Subir el APK generado
+    - name: Subir el APK generado (Búsqueda Flexible)
       uses: actions/upload-artifact@v4
       with:
         name: Optimizer-Pro-APK
-        path: app/build/outputs/apk/debug/app-debug.apk
-
-    
+        path: '**/build/outputs/apk/debug/*.apk'
