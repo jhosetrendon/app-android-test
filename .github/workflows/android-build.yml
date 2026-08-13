@@ -3,30 +3,31 @@ name: Android CI
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Configurar Java JDK
-      uses: actions/setup-java@v3
+    - name: Checkout del proyecto
+      uses: actions/checkout@v4
+
+    - name: Configurar Java 17
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        
-    - name: Dar permisos de ejecución a Gradle
-      run: chmod +x gradlew
-      
-    - name: Compilar el APK (Debug)
-      run: ./gradlew assembleDebug
-      
-    - name: Subir el APK para descargar
-      uses: actions/upload-artifact@v3
+
+    - name: Configurar Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Compilar APK con Gradle
+      run: gradle assembleDebug
+
+    - name: Subir el APK generado
+      uses: actions/upload-artifact@v4
       with:
         name: Optimizer-Pro-APK
         path: app/build/outputs/apk/debug/app-debug.apk
+
+    
